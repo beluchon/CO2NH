@@ -1,6 +1,5 @@
 name: Création du Docker
 
-# Ceci déclenche l'action à chaque fois que vous poussez du code sur la branche "main"
 on:
   push:
     branches: [ "main" ]
@@ -23,10 +22,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Mettre le nom du dépôt en minuscules
+        run: |
+          echo "REPO_LOWERCASE=${GITHUB_REPOSITORY,,}" >> ${GITHUB_ENV}
+
       - name: Construire et pousser l'image Docker
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          # L'image portera le nom de votre dépôt, par exemple : ghcr.io/beluchon/co2nh:latest
-          tags: ghcr.io/${{ github.repository }}:latest
+          tags: ghcr.io/${{ env.REPO_LOWERCASE }}:latest
